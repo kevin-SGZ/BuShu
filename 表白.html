@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给特别的你 - 一封情书</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: '楷体', 'STKaiti', serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .envelope-container {
+            position: relative;
+            z-index: 10;
+            perspective: 1000px;
+        }
+        
+        .envelope {
+            width: 500px;
+            height: 350px;
+            background: #b30000;
+            position: relative;
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(179, 0, 0, 0.3);
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+        }
+        
+        .envelope.open {
+            transform: rotateX(180deg);
+        }
+        
+        .envelope-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #b30000, #ff3366);
+        }
+        
+        .envelope-front::before {
+            content: '💌';
+            font-size: 4rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            transform: rotateX(180deg);
+            background: #fff5f5;
+            border-radius: 10px;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .letter-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .letter-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffb6c1;
+            padding-bottom: 10px;
+        }
+        
+        h1 {
+            color: #b30000;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .date {
+            color: #666;
+            font-size: 1rem;
+            font-style: italic;
+        }
+        
+        .letter-body {
+            line-height: 2;
+            font-size: 1.1rem;
+            color: #333;
+            text-align: justify;
+        }
+        
+        .letter-body p {
+            margin-bottom: 15px;
+            text-indent: 2em;
+        }
+        
+        .letter-signature {
+            text-align: right;
+            margin-top: 30px;
+            font-style: italic;
+            color: #b30000;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            color: #ff3366; /* 改为红色 */
+            font-size: 24px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+        
+        .music-control:hover {
+            transform: scale(1.1);
+        }
+        
+        .music-control i {
+            font-size: 24px;
+            color: #b30000;
+        }
+        
+        .instruction {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #b30000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            animation: fadeInOut 3s ease-in-out infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        @media (max-width: 600px) {
+            .envelope {
+                width: 90vw;
+                height: 70vh;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .letter-body {
+                font-size: 1rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="floating-hearts" id="hearts-container"></div>
+    
+    <div class="instruction">点击信封打开情书 💖</div>
+    
+    <div class="envelope-container">
+        <div class="envelope" id="envelope">
+            <div class="envelope-front"></div>
+            <div class="envelope-back">
+                <div class="letter-content">
+                    <div class="letter-header">
+                        <h1>给特别的你</h1>
+                        <div class="date" id="currentDate"></div>
+                    </div>
+                    <div class="letter-body">
+                        <p>亲爱的：XXX</p>
+                        <p>提笔写下这些文字时，我的心中充满了对你的思念。从遇见你的那一刻起，我的世界仿佛被点亮了新的色彩。</p>
+                        <p>你的笑容如春日暖阳，温暖了我每一个平凡的日子；你的声音如最美妙的乐章，在我心中久久回荡。</p>
+                        <p>我喜欢你看书时专注的神情，喜欢你开心时眼里的星光，甚至喜欢你偶尔的小脾气，因为那都是真实的你。</p>
+                        <p>与你相处的每一刻都让我感到幸福，你的存在让我的生活变得更加完整。我想告诉你，我喜欢你，这份感情比我想象的还要深刻。</p>
+                        <p>愿意给我一个机会，让我陪你走过人生的每一个春夏秋冬吗？</p>
+                    </div>
+                    <div class="letter-signature">
+                        <p>永远爱你的我</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="music-control" id="musicControl">
+        <i class="fas fa-play" id="playIcon"></i>
+    </div>
+    
+    <audio id="bgMusic" loop>
+        <!-- 这里可以替换为实际的音乐文件URL -->
+        <source src="https://example.com/romantic-music.mp3" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
+
+    <script>
+        // 设置当前日期
+        function setCurrentDate() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('zh-CN', options);
+            document.getElementById('currentDate').textContent = dateString;
+        }
+        
+        // 创建漂浮的心形
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            const heartCount = 25;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('floating-heart');
+                heart.innerHTML = '❤';
+                
+                // 随机位置和大小
+                const left = Math.random() * 100;
+                const size = Math.random() * 20 + 15;
+                const duration = Math.random() * 6 + 6;
+                const delay = Math.random() * 15;
+                
+                heart.style.left = `${left}%`;
+                heart.style.fontSize = `${size}px`;
+                heart.style.animationDuration = `${duration}s`;
+                heart.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(heart);
+            }
+        }
+        
+        // 信封点击事件
+        const envelope = document.getElementById('envelope');
+        envelope.addEventListener('click', function() {
+            this.classList.toggle('open');
+        });
+        
+        // 音乐控制
+        const musicControl = document.getElementById('musicControl');
+        const playIcon = document.getElementById('playIcon');
+        const bgMusic = document.getElementById('bgMusic');
+        let isPlaying = false;
+        
+        musicControl.addEventListener('click', function() {
+            if (isPlaying) {
+                bgMusic.pause();
+                playIcon.classList.remove('fa-pause');
+                playIcon.classList.add('fa-play');
+            } else {
+                bgMusic.play().catch(e => {
+                    console.log("自动播放被阻止，请手动点击播放");
+                });
+                playIcon.classList.remove('fa-play');
+                playIcon.classList.add('fa-pause');
+            }
+            isPlaying = !isPlaying;
+        });
+        
+        // 初始化
+        window.addEventListener('load', function() {
+            setCurrentDate();
+            createHearts();
+            
+            // 自动打开信封动画
+            setTimeout(() => {
+                envelope.classList.add('open');
+            }, 1000);
+            
+            // 尝试自动播放音乐
+            setTimeout(() => {
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    playIcon.classList.remove('fa-play');
+                    playIcon.classList.add('fa-pause');
+                }).catch(e => {
+                    console.log("自动播放被阻止，需要用户交互");
+                });
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

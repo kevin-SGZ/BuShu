@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026马年新春祝福</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: '微软雅黑', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #d40000 0%, #ff6b6b 50%, #ffd700 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            animation: fadeInDown 1s ease;
+        }
+        
+        .year-title {
+            font-size: 4rem;
+            color: #ffd700;
+            text-shadow: 3px 3px 0 #d40000, 6px 6px 0 rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+        
+        .subtitle {
+            font-size: 2rem;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .blessings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .blessing-card {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(212, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 3px solid #d40000;
+        }
+        
+        .blessing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(212, 0, 0, 0.4);
+        }
+        
+        .blessing-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .blessing-title {
+            font-size: 1.5rem;
+            color: #d40000;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .blessing-text {
+            color: #8b0000;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .horse-animation {
+            text-align: center;
+            margin: 40px 0;
+            font-size: 5rem;
+            animation: horseRun 3s ease-in-out infinite;
+        }
+        
+        .fireworks-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .firework {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: fireworkExplode 2s ease-out forwards;
+        }
+        
+        .firework-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .spring-couplets {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .couplet {
+            background: linear-gradient(135deg, #d40000 0%, #ff3333 100%);
+            color: #ffd700;
+            padding: 20px 10px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 1.8rem;
+            font-weight: bold;
+            border: 3px solid #ffd700;
+            border-radius: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .horizontal-couplet {
+            background: linear-gradient(135deg, #d40000 0%, #ff3333 100%);
+            color: #ffd700;
+            padding: 15px 40px;
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            border: 3px solid #ffd700;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 600px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .lanterns {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            z-index: 5;
+        }
+        
+        .lantern {
+            font-size: 2rem;
+            animation: lanternSwing 3s ease-in-out infinite;
+        }
+        
+        .click-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            color: #d40000;
+            box-shadow: 0 4px 15px rgba(212, 0, 0, 0.3);
+            z-index: 100;
+            animation: fadeInOut 3s ease-in-out infinite;
+            border: 2px solid #d40000;
+            text-align: center;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes horseRun {
+            0%, 100% { transform: translateX(0) scaleX(1); }
+            25% { transform: translateX(50px) scaleX(1); }
+            50% { transform: translateX(0) scaleX(-1); }
+            75% { transform: translateX(-50px) scaleX(-1); }
+        }
+        
+        @keyframes fireworkExplode {
+            0% {
+                transform: translateY(100vh);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes lanternSwing {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+        
+        @keyframes particleExplode {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .year-title {
+                font-size: 3rem;
+            }
+            
+            .subtitle {
+                font-size: 1.5rem;
+            }
+            
+            .horse-animation {
+                font-size: 3rem;
+            }
+            
+            .couplet {
+                font-size: 1.2rem;
+                padding: 15px 5px;
+            }
+            
+            .horizontal-couplet {
+                font-size: 1.5rem;
+                padding: 10px 20px;
+            }
+            
+            .click-hint {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="lanterns">
+        <div class="lantern">🏮</div>
+        <div class="lantern">🏮</div>
+        <div class="lantern">🏮</div>
+        <div class="lantern">🏮</div>
+    </div>
+    
+    <div class="fireworks-container" id="fireworksContainer"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="year-title">2026</h1>
+            <h2 class="subtitle">马年吉祥 · 新春快乐</h2>
+        </div>
+        
+        <div class="horse-animation">🐎</div>
+        
+        <div class="horizontal-couplet">
+            马到成功 · 万事如意
+        </div>
+        
+        <div class="spring-couplets">
+            <div class="couplet">金马迎春福满门</div>
+            <div class="couplet">吉祥如意喜临门</div>
+        </div>
+        
+        <div class="blessings-grid">
+            <div class="blessing-card">
+                <div class="blessing-icon">💰</div>
+                <h3 class="blessing-title">财源广进</h3>
+                <p class="blessing-text">祝您在新的一年里财源滚滚，生意兴隆，投资顺利，财富倍增！</p>
+            </div>
+            
+            <div class="blessing-card">
+                <div class="blessing-icon">❤️</div>
+                <h3 class="blessing-title">身体健康</h3>
+                <p class="blessing-text">愿您和家人身体健康，精神饱满，活力四射，幸福安康！</p>
+            </div>
+            
+            <div class="blessing-card">
+                <div class="blessing-icon">🎓</div>
+                <h3 class="blessing-title">学业有成</h3>
+                <p class="blessing-text">祝学子们学业有成，金榜题名，智慧增长，前程似锦！</p>
+            </div>
+            
+            <div class="blessing-card">
+                <div class="blessing-icon">💼</div>
+                <h3 class="blessing-title">事业腾达</h3>
+                <p class="blessing-text">愿您事业蒸蒸日上，步步高升，马到成功，大展宏图！</p>
+            </div>
+            
+            <div class="blessing-card">
+                <div class="blessing-icon">🏠</div>
+                <h3 class="blessing-title">家庭幸福</h3>
+                <p class="blessing-text">祝您家庭和睦，幸福美满，团圆欢乐，温馨永驻！</p>
+            </div>
+            
+            <div class="blessing-card">
+                <div class="blessing-icon">🌟</div>
+                <h3 class="blessing-title">万事如意</h3>
+                <p class="blessing-text">愿您心想事成，万事如意，好运连连，幸福永远！</p>
+            </div>
+        </div>
+        
+        <div class="horizontal-couplet">
+            新春大吉 · 福气满满
+        </div>
+    </div>
+    
+    <div class="click-hint" id="clickHint">
+        💥 点击屏幕任意位置触发烟花效果 💥
+    </div>
+    
+    <audio id="bgMusic" loop>
+        <!-- 这里可以替换为实际的新春音乐文件URL -->
+        <source src="https://example.com/spring-festival-music.mp3" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
+    
+    <audio id="fireworkSound">
+        <!-- 这里可以替换为实际的烟花声音文件URL -->
+        <source src="https://example.com/firework-sound.mp3" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
+
+    <script>
+        // 创建烟花效果
+        function createFireworks(x, y) {
+            const container = document.getElementById('fireworksContainer');
+            const colors = ['#ff0000', '#ffd700', '#00ff00', '#00ffff', '#ff00ff', '#ffffff', '#ff9500', '#ff2a92', '#9b30ff', '#00ff7f'];
+            
+            // 创建主烟花
+            const firework = document.createElement('div');
+            firework.classList.add('firework');
+            
+            const left = x ? x : Math.random() * 80 + 10; // 点击位置或随机位置
+            const top = y ? y : 100; // 点击位置或从底部开始
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const size = Math.random() * 8 + 4;
+            const duration = Math.random() * 1 + 1;
+            
+            firework.style.left = `${left}%`;
+            firework.style.top = y ? `${y}px` : '100vh';
+            firework.style.background = color;
+            firework.style.width = `${size}px`;
+            firework.style.height = `${size}px`;
+            firework.style.animationDuration = `${duration}s`;
+            
+            container.appendChild(firework);
+            
+            // 播放烟花声音
+            const fireworkSound = document.getElementById('fireworkSound');
+            fireworkSound.currentTime = 0;
+            fireworkSound.play().catch(e => console.log("烟花声音播放被阻止"));
+            
+            // 烟花爆炸效果
+            setTimeout(() => {
+                createParticleExplosion(left, y ? y : 30, color, container);
+            }, duration * 800);
+            
+            // 移除主烟花元素
+            setTimeout(() => {
+                if (firework.parentNode) {
+                    firework.parentNode.removeChild(firework);
+                }
+            }, duration * 1000);
+        }
+        
+        // 创建粒子爆炸效果
+        function createParticleExplosion(x, y, color, container) {
+            const particleCount = 80; // 增加粒子数量
+            const baseHue = Math.random() * 360;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('firework-particle');
+                
+                const angle = (i / particleCount) * Math.PI * 2;
+                const distance = Math.random() * 150 + 75; // 增大绽放范围1.5倍
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                const particleColor = `hsl(${(baseHue + i * 15) % 360}, 100%, 60%)`;
+                const size = Math.random() * 6 + 3;
+                const duration = Math.random() * 1.5 + 0.8;
+                
+                particle.style.left = x ? `${x}%` : '50%';
+                particle.style.top = y ? `${y}px` : '30%';
+                particle.style.background = particleColor;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                particle.style.animation = `particleExplode ${duration}s ease-out forwards`;
+                
+                container.appendChild(particle);
+                
+                // 移除粒子元素
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, duration * 1000);
+            }
+        }
+        
+        // 点击屏幕触发烟花
+        document.addEventListener('click', function(event) {
+            createFireworks(event.clientX / window.innerWidth * 100, event.clientY);
+        });
+        
+        // 自动烟花效果
+        let autoFireworkInterval;
+        
+        function startAutoFireworks() {
+            // 立即创建一个烟花
+            createFireworks();
+            
+            // 设置定时器持续创建烟花
+            autoFireworkInterval = setInterval(() => {
+                createFireworks();
+            }, 1500); // 每1.5秒自动放一个烟花
+        }
+        
+        // 音乐控制
+        const bgMusic = document.getElementById('bgMusic');
+        
+        // 初始化
+        window.addEventListener('load', function() {
+            // 自动开始烟花效果
+            startAutoFireworks();
+            
+            // 自动播放音乐
+            setTimeout(() => {
+                bgMusic.play().catch(e => {
+                    console.log("自动播放被阻止，需要用户交互");
+                });
+            }, 1000);
+            
+            // 5秒后隐藏点击提示
+            setTimeout(() => {
+                document.getElementById('clickHint').style.display = 'none';
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
