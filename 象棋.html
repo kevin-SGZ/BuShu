@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中国象棋</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2a3a7c, #3a4a8c);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin: 20px 0 40px;
+        }
+        
+        .header h1 {
+            font-size: 3.5rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ffd700, #ffed4e, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 5px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+        
+        .main-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+        
+        .menu-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .menu-card h2 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+        
+        .menu-card p {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #ff8a00, #ff2070);
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            outline: none;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 138, 0, 0.4);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #2a3a7c, #1a2a6c);
+            border-radius: 12px;
+            padding: 25px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-header h2 {
+            color: #ffd700;
+            font-size: 1.6rem;
+        }
+        
+        .close {
+            color: #fff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close:hover {
+            color: #ffd700;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 1rem;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .difficulty-options {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .difficulty-btn {
+            flex: 1;
+            margin: 0 4px;
+            padding: 12px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .difficulty-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .difficulty-btn.active {
+            background: rgba(255, 215, 0, 0.3);
+            border: 2px solid #ffd700;
+        }
+        
+        .chessboard-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .chessboard-container {
+            position: relative;
+            width: 540px;
+            height: 820px;
+            max-width: 540px;
+            max-height: 820px;
+            background: 
+                linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.1) 75%),
+                linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.1) 75%),
+                linear-gradient(to bottom, #d4af37, #b8860b, #daa520);
+            background-size: 20px 20px, 20px 20px, 100% 100%;
+            background-position: 0 0, 10px 10px, 0 0;
+            border: 15px solid #8b4513;
+            border-radius: 5px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+        }
+        
+        .chessboard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(9, 1fr);
+        }
+        
+        .grid-cell {
+            position: relative;
+            border-right: 1px solid #8b4513;
+            border-bottom: 1px solid #8b4513;
+        }
+        
+        .grid-cell:nth-child(8n) {
+            border-right: none;
+        }
+        
+        .grid-cell:nth-child(n+73) {
+            border-bottom: none;
+        }
+        
+        .river {
+            grid-column: 1 / 9;
+            grid-row: 5;
+            background: rgba(30, 144, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: bold;
+            font-style: italic;
+            border-top: 1px solid #8b4513;
+            border-bottom: 1px solid #8b4513;
+        }
+        
+        .river::before {
+            content: "楚河";
+            margin-right: 40%;
+        }
+        
+        .river::after {
+            content: "汉界";
+        }
+        
+        .palace {
+            position: absolute;
+            width: calc(3 * 100% / 8);
+            height: calc(2 * 100% / 9);
+            border: 2px solid #8b4513;
+            pointer-events: none;
+        }
+        
+        .palace-top {
+            top: 0;
+            left: calc(2.5 * 100% / 8);
+        }
+        
+        .palace-bottom {
+            bottom: 0;
+            left: calc(2.5 * 100% / 8);
+        }
+        
+        .palace-diagonal {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .palace-diagonal-1 {
+            background: linear-gradient(to bottom right, transparent 49%, #8b4513 49%, #8b4513 51%, transparent 51%);
+        }
+        
+        .palace-diagonal-2 {
+            background: linear-gradient(to bottom left, transparent 49%, #8b4513 49%, #8b4513 51%, transparent 51%);
+        }
+        
+        .chess-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem; /* 修复为2rem */
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            top: 0;
+            left: 0;
+        }
+        
+        .red-text {
+            color: #ff4444;
+        }
+        
+        .black-text {
+            color: #000;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-menu {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .chessboard-container {
+                width: 90vw;
+                height: 136.67vw;
+                max-width: 90vw;
+                max-height: 136.67vw;
+            }
+            
+            .chess-text {
+                font-size: 1.6rem; /* 移动设备上相应调整 */
+            }
+            
+            .river {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .chess-text {
+                font-size: 1.4rem; /* 小屏幕设备上进一步调整 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>中国象棋</h1>
+        <p>传统智慧与现代设计的完美结合</p>
+    </div>
+    
+    <div class="game-container">
+        <div class="main-menu">
+            <div class="menu-card" id="ai-mode">
+                <h2>人机模式</h2>
+                <p>与AI对战，挑战不同难度级别</p>
+                <button class="btn">开始游戏</button>
+            </div>
+            
+            <div class="menu-card" id="room-mode">
+                <h2>开房模式</h2>
+                <p>创建房间或加入他人房间进行对战</p>
+                <button class="btn">进入</button>
+            </div>
+            
+            <div class="menu-card" id="watch-mode">
+                <h2>房间观战</h2>
+                <p>输入房间密码观看他人对局</p>
+                <button class="btn">观战</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 人机模式难度选择弹窗 -->
+    <div id="ai-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>选择难度</h2>
+                <span class="close">&times;</span>
+            </div>
+            <p>请选择AI的难度级别：</p>
+            <div class="difficulty-options">
+                <div class="difficulty-btn" data-difficulty="easy">简单</div>
+                <div class="difficulty-btn" data-difficulty="normal">一般</div>
+                <div class="difficulty-btn" data-difficulty="hard">困难</div>
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <button class="btn" id="start-ai-game">开始游戏</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 开房模式弹窗 -->
+    <div id="room-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>开房模式</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div style="display: flex; justify-content: space-around; margin-bottom: 15px;">
+                <button class="btn" id="create-room-btn">建房</button>
+                <button class="btn" id="join-room-btn">加入</button>
+            </div>
+            
+            <!-- 建房表单 -->
+            <div id="create-room-section" style="display: none;">
+                <div class="form-group">
+                    <label for="room-password">设置房间密码</label>
+                    <input type="password" id="room-password" placeholder="请输入房间密码">
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn" id="create-room">创建房间</button>
+                </div>
+            </div>
+            
+            <!-- 加入房间表单 -->
+            <div id="join-room-section" style="display: none;">
+                <div class="form-group">
+                    <label for="join-password">房间密码</label>
+                    <input type="password" id="join-password" placeholder="请输入房间密码">
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn" id="join-room">加入房间</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 观战模式弹窗 -->
+    <div id="watch-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>房间观战</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="form-group">
+                <label for="watch-password">房间密码</label>
+                <input type="password" id="watch-password" placeholder="请输入房间密码">
+            </div>
+            <div style="text-align: center;">
+                <button class="btn" id="watch-room">进入观战</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 棋盘弹窗 -->
+    <div id="chessboard-modal" class="chessboard-modal">
+        <div class="chessboard-container">
+            <div class="chessboard" id="chessboard">
+                <!-- 棋盘格子将通过JS生成 -->
+            </div>
+            <!-- 九宫格 -->
+            <div class="palace palace-top">
+                <div class="palace-diagonal palace-diagonal-1"></div>
+                <div class="palace-diagonal palace-diagonal-2"></div>
+            </div>
+            <div class="palace palace-bottom">
+                <div class="palace-diagonal palace-diagonal-1"></div>
+                <div class="palace-diagonal palace-diagonal-2"></div>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="btn" id="exit-game">退出游戏</button>
+            <button class="btn" id="restart-game">重新开始</button>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>© 2026 中国象棋游戏 | 设计：元宝</p>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const aiModeCard = document.getElementById('ai-mode');
+        const roomModeCard = document.getElementById('room-mode');
+        const watchModeCard = document.getElementById('watch-mode');
+        
+        const aiModal = document.getElementById('ai-modal');
+        const roomModal = document.getElementById('room-modal');
+        const watchModal = document.getElementById('watch-modal');
+        const chessboardModal = document.getElementById('chessboard-modal');
+        
+        const closeButtons = document.querySelectorAll('.close');
+        const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+        const startAiGameBtn = document.getElementById('start-ai-game');
+        const createRoomBtn = document.getElementById('create-room-btn');
+        const joinRoomBtn = document.getElementById('join-room-btn');
+        const createRoomSection = document.getElementById('create-room-section');
+        const joinRoomSection = document.getElementById('join-room-section');
+        const createRoomFinalBtn = document.getElementById('create-room');
+        const joinRoomFinalBtn = document.getElementById('join-room');
+        const watchRoomBtn = document.getElementById('watch-room');
+        const exitGameBtn = document.getElementById('exit-game');
+        const restartGameBtn = document.getElementById('restart-game');
+        
+        const chessboard = document.getElementById('chessboard');
+        
+        // 当前选中的难度
+        let selectedDifficulty = 'normal';
+        
+        // 打开人机模式弹窗
+        aiModeCard.addEventListener('click', () => {
+            aiModal.style.display = 'flex';
+        });
+        
+        // 打开开房模式弹窗
+        roomModeCard.addEventListener('click', () => {
+            roomModal.style.display = 'flex';
+            // 重置显示状态
+            createRoomSection.style.display = 'none';
+            joinRoomSection.style.display = 'none';
+        });
+        
+        // 打开观战模式弹窗
+        watchModeCard.addEventListener('click', () => {
+            watchModal.style.display = 'flex';
+        });
+        
+        // 关闭弹窗
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                aiModal.style.display = 'none';
+                roomModal.style.display = 'none';
+                watchModal.style.display = 'none';
+            });
+        });
+        
+        // 点击弹窗外部关闭
+        window.addEventListener('click', (event) => {
+            if (event.target === aiModal) {
+                aiModal.style.display = 'none';
+            }
+            if (event.target === roomModal) {
+                roomModal.style.display = 'none';
+            }
+            if (event.target === watchModal) {
+                watchModal.style.display = 'none';
+            }
+            if (event.target === chessboardModal) {
+                // 不关闭棋盘，需要点击退出按钮
+            }
+        });
+        
+        // 选择难度
+        difficultyBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                difficultyBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedDifficulty = btn.getAttribute('data-difficulty');
+            });
+        });
+        
+        // 开始人机游戏
+        startAiGameBtn.addEventListener('click', () => {
+            aiModal.style.display = 'none';
+            openChessboard();
+        });
+        
+        // 显示建房表单
+        createRoomBtn.addEventListener('click', () => {
+            createRoomSection.style.display = 'block';
+            joinRoomSection.style.display = 'none';
+        });
+        
+        // 显示加入表单
+        joinRoomBtn.addEventListener('click', () => {
+            joinRoomSection.style.display = 'block';
+            createRoomSection.style.display = 'none';
+        });
+        
+        // 创建房间
+        createRoomFinalBtn.addEventListener('click', () => {
+            const roomPassword = document.getElementById('room-password').value;
+            if (!roomPassword) {
+                alert('请输入房间密码');
+                return;
+            }
+            roomModal.style.display = 'none';
+            openChessboard();
+        });
+        
+        // 加入房间
+        joinRoomFinalBtn.addEventListener('click', () => {
+            const roomPassword = document.getElementById('join-password').value;
+            if (!roomPassword) {
+                alert('请输入房间密码');
+                return;
+            }
+            roomModal.style.display = 'none';
+            openChessboard();
+        });
+        
+        // 观战房间
+        watchRoomBtn.addEventListener('click', () => {
+            const roomPassword = document.getElementById('watch-password').value;
+            if (!roomPassword) {
+                alert('请输入房间密码');
+                return;
+            }
+            watchModal.style.display = 'none';
+            openChessboard();
+        });
+        
+        // 退出游戏
+        exitGameBtn.addEventListener('click', () => {
+            chessboardModal.style.display = 'none';
+        });
+        
+        // 重新开始游戏
+        restartGameBtn.addEventListener('click', () => {
+            initChessboard();
+        });
+        
+        // 打开棋盘
+        function openChessboard() {
+            chessboardModal.style.display = 'flex';
+            initChessboard();
+        }
+        
+        // 初始化棋盘
+        function initChessboard() {
+            // 清空棋盘
+            chessboard.innerHTML = '';
+            
+            // 创建棋盘格子 - 8列9行的标准中国象棋棋盘
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    
+                    // 设置网格位置
+                    cell.style.gridColumn = col + 1;
+                    cell.style.gridRow = row + 1;
+                    
+                    // 第5行是楚河汉界（从0开始计数，第5行是索引4）
+                    if (row === 4) {
+                        if (col === 0) {
+                            const river = document.createElement('div');
+                            river.className = 'river';
+                            river.style.gridColumn = '1 / 9';
+                            river.style.gridRow = '5';
+                            chessboard.appendChild(river);
+                            break; // 跳过这一行的其他列
+                        }
+                    } else {
+                        chessboard.appendChild(cell);
+                    }
+                }
+            }
+            
+            // 创建文字棋子
+            const pieces = [
+                // 红方棋子 (下方)
+                {name: '车', x: 0, y: 8, color: 'red'},
+                {name: '马', x: 1, y: 8, color: 'red'},
+                {name: '相', x: 2, y: 8, color: 'red'},
+                {name: '士', x: 3, y: 8, color: 'red'},
+                {name: '帅', x: 4, y: 8, color: 'red'},
+                {name: '士', x: 5, y: 8, color: 'red'},
+                {name: '相', x: 6, y: 8, color: 'red'},
+                {name: '马', x: 7, y: 8, color: 'red'},
+                {name: '车', x: 8, y: 8, color: 'red'},
+                {name: '炮', x: 1, y: 6, color: 'red'},
+                {name: '炮', x: 7, y: 6, color: 'red'},
+                {name: '兵', x: 0, y: 5, color: 'red'},
+                {name: '兵', x: 2, y: 5, color: 'red'},
+                {name: '兵', x: 4, y: 5, color: 'red'},
+                {name: '兵', x: 6, y: 5, color: 'red'},
+                {name: '兵', x: 8, y: 5, color: 'red'},
+                
+                // 黑方棋子 (上方)
+                {name: '车', x: 0, y: 0, color: 'black'},
+                {name: '马', x: 1, y: 0, color: 'black'},
+                {name: '象', x: 2, y: 0, color: 'black'},
+                {name: '士', x: 3, y: 0, color: 'black'},
+                {name: '将', x: 4, y: 0, color: 'black'},
+                {name: '士', x: 5, y: 0, color: 'black'},
+                {name: '象', x: 6, y: 0, color: 'black'},
+                {name: '马', x: 7, y: 0, color: 'black'},
+                {name: '车', x: 8, y: 0, color: 'black'},
+                {name: '炮', x: 1, y: 2, color: 'black'},
+                {name: '炮', x: 7, y: 2, color: 'black'},
+                {name: '卒', x: 0, y: 3, color: 'black'},
+                {name: '卒', x: 2, y: 3, color: 'black'},
+                {name: '卒', x: 4, y: 3, color: 'black'},
+                {name: '卒', x: 6, y: 3, color: 'black'},
+                {name: '卒', x: 8, y: 3, color: 'black'}
+            ];
+            
+            // 添加文字棋子到棋盘
+            pieces.forEach(piece => {
+                const textElement = document.createElement('div');
+                textElement.className = `chess-text ${piece.color}-text`;
+                textElement.textContent = piece.name;
+                textElement.style.gridColumn = piece.x + 1;
+                textElement.style.gridRow = piece.y + 1;
+                
+                // 添加点击事件（简单演示）
+                textElement.addEventListener('click', () => {
+                    // 在实际实现中，这里会有选中和移动棋子的逻辑
+                    textElement.style.textShadow = '0 0 15px gold';
+                    setTimeout(() => {
+                        textElement.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.5)';
+                    }, 500);
+                });
+                
+                chessboard.appendChild(textElement);
+            });
+        }
+        
+        // 初始化难度选择
+        difficultyBtns[1].classList.add('active');
+        
+        // 页面加载完成后初始化棋盘（用于预览）
+        window.addEventListener('load', initChessboard);
+    </script>
+</body>
+</html>
