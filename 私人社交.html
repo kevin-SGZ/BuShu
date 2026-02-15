@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单社交应用</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+        
+        .login-section {
+            padding: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .chat-section {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .chat-header {
+            padding: 15px 20px;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .message.own {
+            align-self: flex-end;
+            background-color: #4a00e0;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .message.friend {
+            align-self: flex-start;
+            background-color: #f0f0f0;
+            color: #333;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            font-size: 14px;
+        }
+        
+        .chat-input button {
+            background-color: #4a00e0;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 0 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .chat-input button:hover {
+            background-color: #3a00b0;
+        }
+        
+        .login-form {
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4a00e0;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .login-form button:hover {
+            background-color: #3a00b0;
+        }
+        
+        .status {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .online-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .friend-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .friend-avatar {
+            width: 35px;
+            height: 35px;
+            background-color: #4a00e0;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            .content {
+                height: 100vh;
+            }
+            
+            .message {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>简单社交应用</h1>
+            <p>输入相同口令即可与好友聊天</p>
+        </div>
+        
+        <div class="content">
+            <div class="login-section" id="loginSection">
+                <div class="login-form">
+                    <input type="text" id="passcodeInput" placeholder="请输入连接口令" maxlength="10">
+                    <button id="loginBtn">进入聊天</button>
+                    <div class="status" id="loginStatus">等待输入口令...</div>
+                </div>
+            </div>
+            
+            <div class="chat-section" id="chatSection">
+                <div class="chat-header">
+                    <div class="friend-info">
+                        <div class="friend-avatar" id="friendAvatar">F</div>
+                        <div>
+                            <div id="friendName">好友</div>
+                            <div class="status"><span class="online-indicator"></span>在线</div>
+                        </div>
+                    </div>
+                    <button id="leaveBtn">离开聊天</button>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message friend">
+                        已成功连接！现在可以开始聊天了。
+                    </div>
+                </div>
+                
+                <div class="chat-input">
+                    <input type="text" id="messageInput" placeholder="输入消息...">
+                    <button id="sendBtn">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginSection = document.getElementById('loginSection');
+            const chatSection = document.getElementById('chatSection');
+            const passcodeInput = document.getElementById('passcodeInput');
+            const loginStatus = document.getElementById('loginStatus');
+            const loginBtn = document.getElementById('loginBtn');
+            const leaveBtn = document.getElementById('leaveBtn');
+            const chatMessages = document.getElementById('chatMessages');
+            const messageInput = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const friendName = document.getElementById('friendName');
+            const friendAvatar = document.getElementById('friendAvatar');
+            
+            let passcode = '';
+            let friendId = '';
+            
+            loginBtn.addEventListener('click', function() {
+                passcode = passcodeInput.value.trim();
+                
+                if (!passcode) {
+                    loginStatus.textContent = '请输入连接口令';
+                    return;
+                }
+                
+                loginStatus.textContent = '正在连接...';
+                
+                setTimeout(function() {
+                    if (passcode.length >= 3) {
+                        loginStatus.textContent = '连接成功！';
+                        
+                        friendId = '用户' + Math.floor(Math.random() * 1000);
+                        friendName.textContent = friendId;
+                        friendAvatar.textContent = friendId.charAt(0).toUpperCase();
+                        
+                        loginSection.style.display = 'none';
+                        chatSection.style.display = 'flex';
+                        
+                        addMessage('系统', '已成功连接到聊天室，输入相同口令的用户可以加入聊天。', 'friend');
+                    } else {
+                        loginStatus.textContent = '连接失败，请检查口令';
+                    }
+                }, 1500);
+            });
+            
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+                
+                addMessage('我', message, 'own');
+                messageInput.value = '';
+                
+                if (Math.random() > 0.5) {
+                    setTimeout(function() {
+                        const replies = [
+                            '你好！',
+                            '这个应用真方便！',
+                            '你是怎么找到这个聊天室的？',
+                            '今天天气不错',
+                            '我同意你的观点',
+                            '哈哈，有意思'
+                        ];
+                        const reply = replies[Math.floor(Math.random() * replies.length)];
+                        addMessage(friendId, reply, 'friend');
+                    }, 1000 + Math.random() * 2000);
+                }
+            }
+            
+            function addMessage(sender, text, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', type);
+                messageDiv.textContent = text;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            sendBtn.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            leaveBtn.addEventListener('click', function() {
+                chatSection.style.display = 'none';
+                loginSection.style.display = 'flex';
+                loginStatus.textContent = '已离开聊天室';
+                chatMessages.innerHTML = '<div class="message friend">已成功连接！现在可以开始聊天了。</div>';
+                messageInput.value = '';
+                passcodeInput.value = '';
+            });
+        });
+    </script>
+</body>
+</html>
