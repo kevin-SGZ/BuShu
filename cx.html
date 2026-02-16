@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>除夕快乐 - 新春吉祥</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #c00a0a;
+            background-image: linear-gradient(to bottom, #8b0000, #c00a0a, #ffd700);
+            color: #ffdf00;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            position: relative;
+        }
+        
+        .header-title {
+            font-size: 3.5rem;
+            text-shadow: 3px 3px 0 #8b0000, 6px 6px 0 rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+            letter-spacing: 5px;
+            color: #ffdf00;
+            animation: pulse 2s infinite alternate;
+        }
+        
+        .header-subtitle {
+            font-size: 1.8rem;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0 #8b0000;
+        }
+        
+        .lanterns {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0 40px;
+        }
+        
+        .lantern {
+            width: 80px;
+            height: 100px;
+            background-color: #ff0000;
+            border-radius: 40px 40px 0 0;
+            position: relative;
+            animation: swing 3s infinite ease-in-out;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .lantern:before, .lantern:after {
+            content: '';
+            position: absolute;
+            background-color: #ffdf00;
+        }
+        
+        .lantern:before {
+            width: 100%;
+            height: 20px;
+            top: 0;
+            left: 0;
+        }
+        
+        .lantern:after {
+            width: 20px;
+            height: 30px;
+            bottom: -30px;
+            left: 30px;
+        }
+        
+        .lantern:nth-child(2) {
+            animation-delay: 0.5s;
+            background-color: #ff9900;
+        }
+        
+        .lantern:nth-child(3) {
+            animation-delay: 1s;
+        }
+        
+        .lantern:nth-child(4) {
+            animation-delay: 1.5s;
+            background-color: #ff9900;
+        }
+        
+        .lantern:nth-child(5) {
+            animation-delay: 2s;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .greeting-card {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 3px solid #ffdf00;
+            backdrop-filter: blur(5px);
+        }
+        
+        .greeting-title {
+            font-size: 2.2rem;
+            color: #ffdf00;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px dashed #ffdf00;
+            padding-bottom: 10px;
+        }
+        
+        .greeting-text {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        
+        .blessings {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .blessing {
+            background-color: #ffdf00;
+            color: #c00a0a;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+        
+        .blessing:hover {
+            transform: translateY(-5px);
+        }
+        
+        .fireworks-container {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            margin: 30px 0;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            opacity: 0;
+        }
+        
+        .countdown {
+            text-align: center;
+            margin: 40px 0;
+            padding: 20px;
+            background: rgba(139, 0, 0, 0.7);
+            border-radius: 15px;
+            border: 2px solid #ffdf00;
+        }
+        
+        .countdown-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ffdf00;
+        }
+        
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .countdown-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #8b0000;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .countdown-label {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            color: #ffdf00;
+        }
+        
+        .new-year-animal {
+            text-align: center;
+            font-size: 2.5rem;
+            margin: 30px 0;
+            color: #ffdf00;
+            text-shadow: 2px 2px 0 #8b0000;
+            animation: glow 2s infinite alternate;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 2px dashed #ffdf00;
+            margin-top: 40px;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        
+        .gold-coin {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: #ffdf00;
+            border-radius: 50%;
+            z-index: 1;
+            opacity: 0.8;
+            animation: float 6s infinite linear;
+        }
+        
+        .gold-coin:before {
+            content: '福';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #c00a0a;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        /* 动画定义 */
+        @keyframes swing {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+        
+        @keyframes glow {
+            0% { text-shadow: 2px 2px 0 #8b0000, 0 0 10px #ffdf00; }
+            100% { text-shadow: 2px 2px 0 #8b0000, 0 0 20px #ffdf00, 0 0 30px #ffdf00; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        
+        @keyframes firework {
+            0% { 
+                opacity: 1;
+                transform: translate(var(--x), var(--y)) scale(0);
+            }
+            100% { 
+                opacity: 0;
+                transform: translate(var(--x), var(--y)) scale(1);
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 2.5rem;
+            }
+            
+            .header-subtitle {
+                font-size: 1.4rem;
+            }
+            
+            .countdown-number {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
+            
+            .countdown-label {
+                font-size: 1rem;
+            }
+            
+            .new-year-animal {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="header-title">除夕快乐</h1>
+            <p class="header-subtitle">辞旧迎新 吉祥如意</p>
+            
+            <div class="lanterns">
+                <div class="lantern"></div>
+                <div class="lantern"></div>
+                <div class="lantern"></div>
+                <div class="lantern"></div>
+                <div class="lantern"></div>
+            </div>
+        </header>
+        
+        <div class="content">
+            <div class="greeting-card">
+                <h2 class="greeting-title">新春祝福</h2>
+                <p class="greeting-text">
+                    除夕之夜，万家团圆。辞别旧岁，喜迎新春。愿您和家人欢聚一堂，共享天伦之乐，笑语盈盈，幸福满溢。
+                </p>
+                <p class="greeting-text">
+                    新的一年，愿您事业如日中天，家庭和睦美满，身体健康长寿，财源广进亨通。除夕守岁，福气临门，好运连连！
+                </p>
+                
+                <div class="blessings">
+                    <div class="blessing">万事如意</div>
+                    <div class="blessing">阖家欢乐</div>
+                    <div class="blessing">财源广进</div>
+                    <div class="blessing">健康平安</div>
+                    <div class="blessing">步步高升</div>
+                    <div class="blessing">心想事成</div>
+                </div>
+            </div>
+            
+            <div class="greeting-card">
+                <h2 class="greeting-title">除夕传统</h2>
+                <p class="greeting-text">
+                    除夕，是岁末的最后一天夜晚，意为"岁除"，又称大年夜、除夕夜。在这天，家家户户都会聚在一起吃团圆饭，守岁迎新。
+                </p>
+                <p class="greeting-text">
+                    传统习俗包括贴春联、挂灯笼、放鞭炮、给压岁钱等。这些习俗寓意着驱邪避灾、迎祥纳福，寄托着人们对新一年的美好期盼。
+                </p>
+                <p class="greeting-text">
+                    今夜，让我们一同守候新年的钟声，迎接崭新而充满希望的一年！
+                </p>
+            </div>
+        </div>
+        
+        <div class="new-year-animal">
+            <i class="fas fa-horse"></i> 马年吉祥 龙马精神 <i class="fas fa-horse"></i>
+        </div>
+        
+        <div class="countdown">
+            <h3 class="countdown-title">距离农历新年还有</h3>
+            <div class="countdown-timer">
+                <div class="countdown-item">
+                    <div id="hours" class="countdown-number">00</div>
+                    <div class="countdown-label">小时</div>
+                </div>
+                <div class="countdown-item">
+                    <div id="minutes" class="countdown-number">00</div>
+                    <div class="countdown-label">分钟</div>
+                </div>
+                <div class="countdown-item">
+                    <div id="seconds" class="countdown-number">00</div>
+                    <div class="countdown-label">秒</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="fireworks-container" id="fireworks"></div>
+        
+        <footer>
+            <p>© 2026 除夕快乐 | 设计：S_G_Z | 新春吉祥，万事如意！</p>
+            <p>愿新年带给您无尽的欢乐、健康与繁荣！</p>
+        </footer>
+    </div>
+    
+    <!-- 生成金币 -->
+    <div id="gold-coins"></div>
+    
+    <script>
+        // 生成金币元素
+        function createGoldCoins() {
+            const container = document.getElementById('gold-coins');
+            const coinCount = 20;
+            
+            for (let i = 0; i < coinCount; i++) {
+                const coin = document.createElement('div');
+                coin.className = 'gold-coin';
+                
+                // 随机位置
+                const left = Math.random() * 100;
+                const size = 20 + Math.random() * 40;
+                const delay = Math.random() * 5;
+                const duration = 3 + Math.random() * 7;
+                
+                coin.style.left = `${left}vw`;
+                coin.style.width = `${size}px`;
+                coin.style.height = `${size}px`;
+                coin.style.animationDelay = `${delay}s`;
+                coin.style.animationDuration = `${duration}s`;
+                
+                container.appendChild(coin);
+            }
+        }
+        
+        // 创建烟花效果
+        function createFireworks() {
+            const container = document.getElementById('fireworks');
+            const fireworkCount = 5;
+            
+            for (let i = 0; i < fireworkCount; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    
+                    // 随机颜色
+                    const colors = ['#ff0000', '#ff9900', '#ffff00', '#00ff00', '#00ffff', '#ff00ff'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    // 随机位置
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    
+                    firework.style.setProperty('--x', `${x}%`);
+                    firework.style.setProperty('--y', `${y}%`);
+                    firework.style.backgroundColor = color;
+                    
+                    // 烟花爆炸效果
+                    const particles = 30;
+                    for (let j = 0; j < particles; j++) {
+                        setTimeout(() => {
+                            const particle = document.createElement('div');
+                            particle.className = 'firework';
+                            
+                            // 随机角度和距离
+                            const angle = (j / particles) * 2 * Math.PI;
+                            const distance = 50 + Math.random() * 100;
+                            const particleX = Math.cos(angle) * distance;
+                            const particleY = Math.sin(angle) * distance;
+                            
+                            particle.style.setProperty('--x', `${particleX}px`);
+                            particle.style.setProperty('--y', `${particleY}px`);
+                            particle.style.backgroundColor = color;
+                            particle.style.width = '3px';
+                            particle.style.height = '3px';
+                            particle.style.animation = `firework 0.8s ease-out forwards`;
+                            particle.style.left = `${x}%`;
+                            particle.style.top = `${y}%`;
+                            
+                            container.appendChild(particle);
+                            
+                            // 移除粒子
+                            setTimeout(() => {
+                                if (particle.parentNode) {
+                                    particle.parentNode.removeChild(particle);
+                                }
+                            }, 800);
+                        }, j * 20);
+                    }
+                    
+                    container.appendChild(firework);
+                    
+                    // 移除烟花
+                    setTimeout(() => {
+                        if (firework.parentNode) {
+                            firework.parentNode.removeChild(firework);
+                        }
+                    }, 800);
+                }, i * 2000);
+            }
+            
+            // 持续生成烟花
+            setTimeout(createFireworks, fireworkCount * 2000);
+        }
+        
+        // 倒计时功能
+        function updateCountdown() {
+            // 2026年农历新年是2月17日
+            const newYearDate = new Date('2026-02-17T00:00:00');
+            const now = new Date();
+            
+            // 计算时间差
+            const diff = newYearDate - now;
+            
+            if (diff > 0) {
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            } else {
+                // 新年已到
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                document.querySelector('.countdown-title').textContent = '农历新年已到！恭喜发财！';
+            }
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            createGoldCoins();
+            createFireworks();
+            updateCountdown();
+            
+            // 每秒更新倒计时
+            setInterval(updateCountdown, 1000);
+            
+            // 为祝福语添加点击效果
+            document.querySelectorAll('.blessing').forEach(blessing => {
+                blessing.addEventListener('click', function() {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.backgroundColor = '#ff9900';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                        this.style.backgroundColor = '#ffdf00';
+                    }, 300);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
