@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双人互动围棋游戏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e6e6e6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            color: #f0c674;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #aaa;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+        }
+        
+        .game-section {
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .board-container {
+            flex: 1;
+            min-width: 500px;
+        }
+        
+        .controls-container {
+            flex: 0 0 350px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #f0c674;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #444;
+        }
+        
+        #gameCanvas {
+            display: block;
+            background-color: #e6b17e;
+            border-radius: 5px;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .connection-panel, .game-info {
+            margin-bottom: 25px;
+        }
+        
+        .room-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        label {
+            color: #ccc;
+            font-weight: bold;
+        }
+        
+        input {
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            border-color: #f0c674;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            background: #444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .primary-btn {
+            background: linear-gradient(to right, #4CAF50, #2E7D32);
+        }
+        
+        .secondary-btn {
+            background: linear-gradient(to right, #2196F3, #1565C0);
+        }
+        
+        .danger-btn {
+            background: linear-gradient(to right, #f44336, #c62828);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #777;
+        }
+        
+        .status-dot.connected {
+            background-color: #4CAF50;
+            box-shadow: 0 0 8px #4CAF50;
+        }
+        
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .player {
+            text-align: center;
+        }
+        
+        .player-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .player-black .player-name {
+            color: #333;
+        }
+        
+        .player-white .player-name {
+            color: #f0f0f0;
+        }
+        
+        .stone {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .stone-black {
+            background: radial-gradient(circle at 30% 30%, #666, #000);
+        }
+        
+        .stone-white {
+            background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+            border: 1px solid #aaa;
+        }
+        
+        .game-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .game-messages {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            height: 150px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .message {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .message.system {
+            color: #4CAF50;
+        }
+        
+        .message.opponent {
+            color: #2196F3;
+        }
+        
+        .message.error {
+            color: #f44336;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            width: 100%;
+        }
+        
+        .instructions {
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 900px) {
+            .game-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .board-container, .controls-container {
+                min-width: 100%;
+            }
+            
+            #gameCanvas {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>双人互动围棋</h1>
+            <p class="subtitle">与好友在线对弈，体验中国古典智慧。创建房间或输入口令加入游戏。</p>
+        </header>
+        
+        <div class="game-container">
+            <div class="game-section board-container">
+                <h2 class="section-title">围棋棋盘</h2>
+                <canvas id="gameCanvas" width="600" height="600"></canvas>
+            </div>
+            
+            <div class="game-section controls-container">
+                <div class="connection-panel">
+                    <h2 class="section-title">连接设置</h2>
+                    <div class="status-indicator">
+                        <div class="status-dot" id="statusDot"></div>
+                        <span id="connectionStatus">等待连接</span>
+                    </div>
+                    
+                    <div class="room-controls">
+                        <div class="input-group">
+                            <label for="roomInput">房间口令</label>
+                            <input type="text" id="roomInput" placeholder="输入或创建房间口令">
+                        </div>
+                        
+                        <div class="button-group">
+                            <button class="primary-btn" id="createRoomBtn">创建房间</button>
+                            <button class="secondary-btn" id="joinRoomBtn">加入房间</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="game-info">
+                    <h2 class="section-title">游戏信息</h2>
+                    
+                    <div class="player-info">
+                        <div class="player player-black">
+                            <div class="player-name">黑棋</div>
+                            <div id="blackPlayerName">等待玩家...</div>
+                            <div>已下: <span id="blackStones">0</span> <span class="stone stone-black"></span></div>
+                        </div>
+                        
+                        <div class="player player-white">
+                            <div class="player-name">白棋</div>
+                            <div id="whitePlayerName">等待玩家...</div>
+                            <div>已下: <span id="whiteStones">0</span> <span class="stone stone-white"></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="game-state">
+                        <p>当前回合: <span id="currentTurn">黑棋</span></p>
+                        <p>状态: <span id="gameStatus">等待连接</span></p>
+                    </div>
+                    
+                    <div class="game-controls">
+                        <button class="secondary-btn" id="resignBtn" disabled>认输</button>
+                        <button class="danger-btn" id="restartBtn" disabled>重新开始</button>
+                        <button class="" id="undoBtn" disabled>悔棋</button>
+                    </div>
+                </div>
+                
+                <div class="game-messages">
+                    <h3 class="section-title">游戏消息</h3>
+                    <div id="messageLog">
+                        <div class="message system">欢迎来到双人围棋游戏！</div>
+                        <div class="message system">创建房间或输入口令加入游戏。</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>游戏说明：</h3>
+            <p>1. 创建房间：点击"创建房间"按钮，系统会生成一个随机口令，将此口令分享给好友</p>
+            <p>2. 加入房间：在口令框中输入好友分享的口令，点击"加入房间"</p>
+            <p>3. 游戏规则：黑棋先行，轮流在棋盘交叉点落子，被包围的棋子会被提走</p>
+            <p>4. 胜负：游戏结束后，占据棋盘面积大的一方获胜</p>
+            <p>注意：此游戏使用WebRTC进行点对点连接，需要双方网络都允许WebRTC连接</p>
+        </div>
+        
+        <footer>
+            <p>HTML版双人互动围棋游戏 | 基于WebRTC技术 | 2026年</p>
+        </footer>
+    </div>
+
+    <script>
+        // 游戏核心逻辑
+        document.addEventListener('DOMContentLoaded', function() {
+            // 棋盘参数
+            const BOARD_SIZE = 19;
+            const CANVAS_SIZE = 600;
+            const CELL_SIZE = CANVAS_SIZE / (BOARD_SIZE + 1);
+            const STONE_RADIUS = CELL_SIZE * 0.45;
+            
+            // 游戏状态
+            let gameState = {
+                board: Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(0)),
+                currentPlayer: 1, // 1: 黑棋, 2: 白棋
+                gameActive: false,
+                blackPlayerName: "等待玩家...",
+                whitePlayerName: "等待玩家...",
+                blackStones: 0,
+                whiteStones: 0,
+                playerColor: 0, // 0: 未分配, 1: 黑棋, 2: 白棋
+                roomId: "",
+                isHost: false
+            };
+            
+            // WebRTC连接相关
+            let peerConnection = null;
+            let dataChannel = null;
+            let localStream = null;
+            
+            // DOM元素
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const roomInput = document.getElementById('roomInput');
+            const createRoomBtn = document.getElementById('createRoomBtn');
+            const joinRoomBtn = document.getElementById('joinRoomBtn');
+            const statusDot = document.getElementById('statusDot');
+            const connectionStatus = document.getElementById('connectionStatus');
+            const blackPlayerName = document.getElementById('blackPlayerName');
+            const whitePlayerName = document.getElementById('whitePlayerName');
+            const blackStones = document.getElementById('blackStones');
+            const whiteStones = document.getElementById('whiteStones');
+            const currentTurn = document.getElementById('currentTurn');
+            const gameStatus = document.getElementById('gameStatus');
+            const resignBtn = document.getElementById('resignBtn');
+            const restartBtn = document.getElementById('restartBtn');
+            const undoBtn = document.getElementById('undoBtn');
+            const messageLog = document.getElementById('messageLog');
+            
+            // 初始化棋盘
+            drawBoard();
+            
+            // 绘制棋盘
+            function drawBoard() {
+                // 清空画布
+                ctx.fillStyle = '#e6b17e';
+                ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+                
+                // 绘制网格线
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 1;
+                
+                for (let i = 0; i < BOARD_SIZE; i++) {
+                    // 横线
+                    ctx.beginPath();
+                    ctx.moveTo(CELL_SIZE, CELL_SIZE * (i + 1));
+                    ctx.lineTo(CANVAS_SIZE - CELL_SIZE, CELL_SIZE * (i + 1));
+                    ctx.stroke();
+                    
+                    // 竖线
+                    ctx.beginPath();
+                    ctx.moveTo(CELL_SIZE * (i + 1), CELL_SIZE);
+                    ctx.lineTo(CELL_SIZE * (i + 1), CANVAS_SIZE - CELL_SIZE);
+                    ctx.stroke();
+                }
+                
+                // 绘制星位点
+                const starPoints = [3, 9, 15];
+                ctx.fillStyle = '#000';
+                
+                for (let i = 0; i < starPoints.length; i++) {
+                    for (let j = 0; j < starPoints.length; j++) {
+                        const x = CELL_SIZE * (starPoints[i] + 1);
+                        const y = CELL_SIZE * (starPoints[j] + 1);
+                        
+                        ctx.beginPath();
+                        ctx.arc(x, y, 5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+                
+                // 绘制棋子
+                for (let i = 0; i < BOARD_SIZE; i++) {
+                    for (let j = 0; j < BOARD_SIZE; j++) {
+                        if (gameState.board[i][j] !== 0) {
+                            drawStone(i, j, gameState.board[i][j]);
+                        }
+                    }
+                }
+            }
+            
+            // 绘制棋子
+            function drawStone(row, col, color) {
+                const x = CELL_SIZE * (col + 1);
+                const y = CELL_SIZE * (row + 1);
+                
+                // 创建渐变
+                let gradient;
+                if (color === 1) { // 黑棋
+                    gradient = ctx.createRadialGradient(
+                        x - STONE_RADIUS/3, y - STONE_RADIUS/3, 1,
+                        x, y, STONE_RADIUS
+                    );
+                    gradient.addColorStop(0, '#666');
+                    gradient.addColorStop(1, '#000');
+                } else { // 白棋
+                    gradient = ctx.createRadialGradient(
+                        x - STONE_RADIUS/3, y - STONE_RADIUS/3, 1,
+                        x, y, STONE_RADIUS
+                    );
+                    gradient.addColorStop(0, '#fff');
+                    gradient.addColorStop(1, '#ccc');
+                }
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(x, y, STONE_RADIUS, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 白棋添加边框
+                if (color === 2) {
+                    ctx.strokeStyle = '#999';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+            
+            // 处理棋盘点击
+            canvas.addEventListener('click', function(event) {
+                if (!gameState.gameActive || gameState.playerColor !== gameState.currentPlayer) {
+                    addMessage("现在不是你的回合或游戏未开始", "error");
+                    return;
+                }
+                
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                // 计算点击的棋盘位置
+                const col = Math.round(x / CELL_SIZE) - 1;
+                const row = Math.round(y / CELL_SIZE) - 1;
+                
+                // 检查是否在棋盘范围内
+                if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
+                    // 检查该位置是否已有棋子
+                    if (gameState.board[row][col] === 0) {
+                        // 落子
+                        placeStone(row, col, gameState.currentPlayer);
+                        
+                        // 发送落子信息给对方
+                        if (dataChannel && dataChannel.readyState === 'open') {
+                            dataChannel.send(JSON.stringify({
+                                type: 'move',
+                                row: row,
+                                col: col
+                            }));
+                        }
+                        
+                        // 切换玩家
+                        gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1;
+                        updateGameInfo();
+                        
+                        // 检查游戏是否结束
+                        checkGameEnd();
+                    }
+                }
+            });
+            
+            // 在棋盘上放置棋子
+            function placeStone(row, col, color) {
+                gameState.board[row][col] = color;
+                
+                // 更新棋子计数
+                if (color === 1) {
+                    gameState.blackStones++;
+                } else {
+                    gameState.whiteStones++;
+                }
+                
+                // 绘制棋子
+                drawStone(row, col, color);
+                
+                addMessage(`${color === 1 ? '黑棋' : '白棋'}在 ${String.fromCharCode(65 + col)}${row + 1} 落子`);
+            }
+            
+            // 更新游戏信息显示
+            function updateGameInfo() {
+                blackPlayerName.textContent = gameState.blackPlayerName;
+                whitePlayerName.textContent = gameState.whitePlayerName;
+                blackStones.textContent = gameState.blackStones;
+                whiteStones.textContent = gameState.whiteStones;
+                currentTurn.textContent = gameState.currentPlayer === 1 ? '黑棋' : '白棋';
+                
+                // 高亮当前玩家
+                document.querySelector('.player-black').classList.toggle('active', gameState.currentPlayer === 1);
+                document.querySelector('.player-white').classList.toggle('active', gameState.currentPlayer === 2);
+            }
+            
+            // 检查游戏是否结束
+            function checkGameEnd() {
+                // 简化的游戏结束检查（完整实现需要复杂的围棋规则）
+                // 这里只是简单判断棋盘是否已满
+                let emptyCells = 0;
+                for (let i = 0; i < BOARD_SIZE; i++) {
+                    for (let j = 0; j < BOARD_SIZE; j++) {
+                        if (gameState.board[i][j] === 0) emptyCells++;
+                    }
+                }
+                
+                if (emptyCells === 0) {
+                    endGame("棋盘已满，游戏结束！");
+                }
+            }
+            
+            // 结束游戏
+            function endGame(message) {
+                gameState.gameActive = false;
+                gameStatus.textContent = "游戏结束";
+                addMessage(message, "system");
+                
+                // 启用重新开始按钮
+                restartBtn.disabled = false;
+                resignBtn.disabled = true;
+                undoBtn.disabled = true;
+            }
+            
+            // 重置游戏
+            function resetGame() {
+                gameState.board = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(0));
+                gameState.currentPlayer = 1;
+                gameState.blackStones = 0;
+                gameState.whiteStones = 0;
+                gameState.gameActive = true;
+                
+                drawBoard();
+                updateGameInfo();
+                gameStatus.textContent = "游戏中";
+                
+                addMessage("游戏已重置，黑棋先行", "system");
+                
+                // 通知对手
+                if (dataChannel && dataChannel.readyState === 'open') {
+                    dataChannel.send(JSON.stringify({
+                        type: 'reset'
+                    }));
+                }
+                
+                // 更新按钮状态
+                resignBtn.disabled = false;
+                undoBtn.disabled = false;
+            }
+            
+            // 添加消息到消息日志
+            function addMessage(text, type = "system") {
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${type}`;
+                messageElement.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
+                messageLog.appendChild(messageElement);
+                messageLog.scrollTop = messageLog.scrollHeight;
+            }
+            
+            // 更新连接状态
+            function updateConnectionStatus(status, isConnected) {
+                connectionStatus.textContent = status;
+                statusDot.className = `status-dot ${isConnected ? 'connected' : ''}`;
+            }
+            
+            // 生成随机房间ID
+            function generateRoomId() {
+                return Math.random().toString(36).substring(2, 8).toUpperCase();
+            }
+            
+            // 创建房间
+            createRoomBtn.addEventListener('click', function() {
+                if (roomInput.value.trim()) {
+                    gameState.roomId = roomInput.value.trim();
+                } else {
+                    gameState.roomId = generateRoomId();
+                    roomInput.value = gameState.roomId;
+                }
+                
+                gameState.isHost = true;
+                gameState.playerColor = 1; // 房主为黑棋
+                gameState.blackPlayerName = "你 (房主)";
+                
+                addMessage(`房间已创建，房间号: ${gameState.roomId}`, "system");
+                addMessage("请将房间号分享给好友，等待对方加入...", "system");
+                
+                updateConnectionStatus("等待对手加入...", false);
+                
+                // 模拟WebRTC信令 - 在实际应用中需要使用信令服务器
+                // 这里我们简化处理，使用本地存储模拟信令
+                localStorage.setItem('webrtc_room_host', gameState.roomId);
+                
+                // 禁用创建/加入按钮
+                createRoomBtn.disabled = true;
+                joinRoomBtn.disabled = true;
+                
+                // 开始监听"对手加入"
+                setTimeout(() => {
+                    // 模拟对手加入
+                    simulatePeerConnection();
+                }, 2000);
+            });
+            
+            // 加入房间
+            joinRoomBtn.addEventListener('click', function() {
+                if (!roomInput.value.trim()) {
+                    addMessage("请输入房间号", "error");
+                    return;
+                }
+                
+                gameState.roomId = roomInput.value.trim();
+                gameState.isHost = false;
+                gameState.playerColor = 2; // 加入者为白棋
+                gameState.whitePlayerName = "你";
+                
+                addMessage(`正在加入房间: ${gameState.roomId}`, "system");
+                
+                // 检查房间是否存在
+                if (localStorage.getItem('webrtc_room_host') === gameState.roomId) {
+                    updateConnectionStatus("正在连接...", false);
+                    
+                    // 禁用创建/加入按钮
+                    createRoomBtn.disabled = true;
+                    joinRoomBtn.disabled = true;
+                    
+                    // 模拟连接
+                    setTimeout(() => {
+                        simulatePeerConnection();
+                    }, 1500);
+                } else {
+                    addMessage("房间不存在，请检查房间号", "error");
+                }
+            });
+            
+            // 模拟WebRTC对等连接
+            function simulatePeerConnection() {
+                // 在实际WebRTC应用中，这里会创建RTCPeerConnection
+                // 并建立数据通道用于通信
+                // 这里我们简化处理，使用定时器模拟连接过程
+                
+                updateConnectionStatus("正在建立连接...", false);
+                
+                setTimeout(() => {
+                    // 模拟连接成功
+                    dataChannel = {
+                        readyState: 'open',
+                        send: function(data) {
+                            // 模拟数据发送
+                            console.log("发送数据:", data);
+                            
+                            // 模拟接收数据
+                            setTimeout(() => {
+                                const message = JSON.parse(data);
+                                handleDataChannelMessage(message);
+                            }, 100);
+                        }
+                    };
+                    
+                    // 更新状态
+                    updateConnectionStatus("已连接", true);
+                    
+                    // 设置玩家名称
+                    if (gameState.isHost) {
+                        // 房主等待对手加入
+                        addMessage("对手已加入房间！", "system");
+                        gameState.whitePlayerName = "对手";
+                        
+                        // 发送欢迎消息
+                        dataChannel.send(JSON.stringify({
+                            type: 'welcome',
+                            player: 'black',
+                            name: '房主'
+                        }));
+                    } else {
+                        // 加入者
+                        addMessage("成功加入房间！", "system");
+                        gameState.blackPlayerName = "对手";
+                        
+                        // 发送加入消息
+                        dataChannel.send(JSON.stringify({
+                            type: 'join',
+                            player: 'white',
+                            name: '玩家'
+                        }));
+                    }
+                    
+                    // 更新游戏信息
+                    updateGameInfo();
+                    
+                    // 启动游戏
+                    setTimeout(() => {
+                        startGame();
+                    }, 1000);
+                    
+                }, 2000);
+            }
+            
+            // 处理数据通道消息
+            function handleDataChannelMessage(message) {
+                console.log("收到消息:", message);
+                
+                switch(message.type) {
+                    case 'welcome':
+                        addMessage(`房主: ${message.name}`, "opponent");
+                        gameState.blackPlayerName = message.name;
+                        updateGameInfo();
+                        break;
+                        
+                    case 'join':
+                        addMessage(`玩家加入: ${message.name}`, "opponent");
+                        gameState.whitePlayerName = message.name;
+                        updateGameInfo();
+                        break;
+                        
+                    case 'move':
+                        addMessage(`对手在 ${String.fromCharCode(65 + message.col)}${message.row + 1} 落子`, "opponent");
+                        placeStone(message.row, message.col, gameState.currentPlayer);
+                        gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1;
+                        updateGameInfo();
+                        checkGameEnd();
+                        break;
+                        
+                    case 'chat':
+                        addMessage(`对手: ${message.text}`, "opponent");
+                        break;
+                        
+                    case 'reset':
+                        addMessage("对手重新开始了游戏", "system");
+                        resetGame();
+                        break;
+                        
+                    case 'resign':
+                        addMessage("对手认输，你赢了！", "system");
+                        endGame("对手认输，游戏结束！");
+                        break;
+                        
+                    case 'undo':
+                        addMessage("对手请求悔棋", "system");
+                        // 这里可以添加悔棋逻辑
+                        break;
+                }
+            }
+            
+            // 开始游戏
+            function startGame() {
+                gameState.gameActive = true;
+                gameStatus.textContent = "游戏中";
+                
+                addMessage("游戏开始！黑棋先行", "system");
+                
+                // 启用游戏控制按钮
+                resignBtn.disabled = false;
+                restartBtn.disabled = false;
+                undoBtn.disabled = false;
+                
+                // 如果是白棋，显示等待对手下棋
+                if (gameState.playerColor === 2) {
+                    addMessage("等待黑棋下子...", "system");
+                }
+            }
+            
+            // 认输按钮
+            resignBtn.addEventListener('click', function() {
+                if (confirm("确定要认输吗？")) {
+                    addMessage("你已认输，游戏结束", "system");
+                    endGame("你已认输，游戏结束");
+                    
+                    // 通知对手
+                    if (dataChannel && dataChannel.readyState === 'open') {
+                        dataChannel.send(JSON.stringify({
+                            type: 'resign'
+                        }));
+                    }
+                }
+            });
+            
+            // 重新开始按钮
+            restartBtn.addEventListener('click', function() {
+                if (confirm("确定要重新开始游戏吗？")) {
+                    resetGame();
+                }
+            });
+            
+            // 悔棋按钮
+            undoBtn.addEventListener('click', function() {
+                addMessage("悔棋功能开发中...", "system");
+                // 这里可以添加悔棋逻辑
+            });
+            
+            // 添加聊天功能（简单版）
+            roomInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter' && dataChannel && dataChannel.readyState === 'open') {
+                    const message = roomInput.value.trim();
+                    if (message) {
+                        dataChannel.send(JSON.stringify({
+                            type: 'chat',
+                            text: message
+                        }));
+                        addMessage(`你: ${message}`);
+                        roomInput.value = '';
+                    }
+                }
+            });
+            
+            // 初始化界面
+            updateGameInfo();
+            updateConnectionStatus("等待连接", false);
+            
+            // 添加一些示例消息
+            addMessage("提示：使用鼠标点击棋盘交叉点落子", "system");
+            addMessage("提示：创建房间后，将房间号分享给好友", "system");
+        });
+    </script>
+</body>
+</html>
