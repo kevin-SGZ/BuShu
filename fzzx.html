@@ -2,92 +2,104 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>全民反诈 守护钱包</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf9 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+            background: #f0f2f5;
             color: #333;
-            line-height: 1.6;
-            padding: 20px;
+            line-height: 1.5;
+            padding: 16px;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
-        。container {
-            max-width: 600px;
-            width: 100%;
+        .container {
             background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            text-align: center;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            padding: 24px 20px;
+            width: 100%;
         }
         h1 {
-            color: #e74c3c;
-            margin-bottom: 15px;
-            font-size: clamp(1.5rem, 5vw, 2rem);
+            color: #e53e3e;
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+            text-align: center;
         }
-        。tip-box {
+        .subtitle {
+            color: #555;
+            font-size: 0.95rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .tip-box {
             background: #f8f9fa;
-            border-left: 4px solid #3498db;
-            padding: 15px;
+            border-left: 4px solid #3182ce;
+            padding: 16px;
             margin: 20px 0;
-            text-align: left;
             border-radius: 0 8px 8px 0;
         }
-        。tip-box ul { padding-left: 20px; }
-        。tip-box li { margin-bottom: 8px; }
-        。img-container {
-            margin: 25px 0;
+        .tip-box strong {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+        .tip-box ul { padding-left: 20px; }
+        .tip-box li {
+            font-size: 0.92rem;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+        .img-container {
+            margin: 24px 0;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
         }
-        。img-container img {
+        .img-container img {
             width: 100%;
             height: auto;
             display: block;
-            transition: transform 0.3s ease;
         }
-        。img-container img:hover { transform: scale(1.02); }
-        。footer {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #7f8c8d;
+        .footer {
+            margin-top: 24px;
+            font-size: 0.85rem;
+            color: #718096;
+            text-align: center;
         }
-        @media (max-width: 768px) {
-            body { padding: 15px; }
-            。container { padding: 20px; }
+        .footer p { margin-bottom: 8px; }
+        .highlight {
+            color: #dd6b20;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>⚠️ 警惕诈骗 守护财产安全</h1>
-        <p>诈骗手段不断翻新，请务必提高警惕，做到不轻信、不转账、不透露个人信息。</p>
+        <h1>📱 警惕诈骗 守护钱包</h1>
+        <p class="subtitle">诈骗手段不断翻新，请务必提高警惕，做到不轻信、不转账、不透露。</p>
         
         <div class="tip-box">
-            <strong>📢 防骗小贴士：</strong>
+            <strong>🔍 常见诈骗套路提醒：</strong>
             <ul>
-                <li>凡是要求<strong>转账到安全账户</strong>的都是诈骗！</li>
-                <li>凡是索要<strong>短信验证码、银行卡密码</strong>的都是诈骗！</li>
-                <li>凡是自称“公检法”要求<strong>电话办案、资金审查</strong>的都是诈骗！</li>
-                <li>网络交友诱导<strong>投资、赌博</strong>的都是诈骗！</li>
+                <li>凡是自称“客服”<span class="highlight">索要验证码</span>的都是诈骗！</li>
+                <li>凡是陌生链接要求<span class="highlight">填写银行卡、密码</span>的都是诈骗！</li>
+                <li>凡是兼职刷单、点赞赚钱的<span class="highlight">垫付任务</span>都是诈骗！</li>
+                <li>凡是 支付宝/微信 自称<span class="highlight">“熟人”借钱</span>，务必电话核实！</li>
             </ul>
         </div>
 
-        <!-- 你提供的图片链接 -->
+        
         <div class="img-container">
-            <img src="https://p3.itc.cn/q_70/images03/20210926/7387e3e421474fd3af67c79c3e637b5d.jpeg" alt="反诈宣传插图" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRlMmU2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOHB4IiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zNWVtIj7lm77niYflsIHpobXkuI3mmK88L3RleHQ+PC9zdmc+'">
+            <img src="https://p3.itc.cn/q_70/images03/20210926/7387e3e421474fd3af67c79c3e637b5d.jpeg" alt="反诈宣传插图" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRlMmU2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNnB4IiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iMC4zNWVtIj7lm77niYflsIHpobXkuI3mmK88L3RleHQ+PC9zdmc+'" title="反诈宣传">
         </div>
 
         <div class="footer">
-            <p>如遇可疑情况，请立即拨打<strong>110</strong>或全国反诈专线<strong>96110</strong>咨询举报。</p>
-            <p>© 全民反诈行动</p>
+            <p>如遇可疑情况，请立即拨打 <span class="highlight">110</span> 或全国反诈专线 <span class="highlight">96110</span></p>
+            <p>下载“国家反诈中心”APP，守护财产安全</p>
+            <p style="margin-top: 12px;">© 全民反诈行动 </p>
         </div>
     </div>
 </body>
